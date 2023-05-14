@@ -217,6 +217,7 @@ void NewCandidates (Candidate** candidates, int* qt_candidates) {
 }
 
 // Function to list all registered candidates
+
 void ListCandidates(Candidate* candidates, int qt_candidates) {
     printf("-------- List of Candidates --------\n");
     for (int i = 0; i < qt_candidates; i++) {
@@ -238,17 +239,18 @@ void ListCandidates(Candidate* candidates, int qt_candidates) {
             else
                 printf("No\n");
         printf("Availability: ");
-        if (candidates[i].availability == 1) 
-            printf("Morning\n");
-        if (candidates[i].availability == 2)
-            printf("Afternoon\n"); 
-        if (candidates[i].availability == 3)     
-            printf("Evening:\n\n");
+            if (candidates[i].availability == 1) 
+                printf("Morning\n");
+            if (candidates[i].availability == 2)
+                printf("Afternoon\n"); 
+            if (candidates[i].availability == 3)     
+                printf("Evening:\n\n");
     }
     printf("------------------------------------\n");
 }
 
 // Function to search for a candidate by name
+
 void SearchCandidates(Candidate* candidates, int qt_candidates) {
     char searchName[100];
     printf("Enter candidate's name to search: ");
@@ -259,19 +261,39 @@ void SearchCandidates(Candidate* candidates, int qt_candidates) {
         if (strcmp(candidates[i].name, searchName) == 0) {
             printf("Candidate found:\n");
             printf("Name: %s\n", candidates[i].name);
-            // Print other candidate information here...
-            printf("\n");
+            printf("CPF/RG: %s\n", candidates[i].id);
+            printf("Address: %s\n", candidates[i].address);
+            printf("Income: %d\n", candidates[i].family_size);
+            printf("Family size: %d\n", candidates[i].family_size);
+            printf("Number of family members needing medication: %d\n", candidates[i].family_members_needing_meds);
+            printf("Is vegeterian: ");
+                if (candidates[i].is_vegetarian == 1)
+                    printf("Yes\n");
+                else
+                    printf("No\n");
+            printf("Requires assistance in food Collection: ");
+                if (candidates[i].requires_assistance == 1)
+                    printf("Yes\n");
+                else
+                    printf("No\n");
+            printf("Availability: ");
+                if (candidates[i].availability == 1) 
+                    printf("Morning\n");
+                if (candidates[i].availability == 2)
+                    printf("Afternoon\n"); 
+                if (candidates[i].availability == 3)     
+                    printf("Evening:\n\n");
             found = 1;
             break;
         }
     }
-
     if (!found) {
         printf("Candidate not found.\n\n");
     }
 }
 
 // Function to update a candidate's information
+
 void UpdateCandidates(Candidate* candidates, int qt_candidates) {
     char searchName[100];
     printf("Enter candidate's name to update: ");
@@ -282,10 +304,30 @@ void UpdateCandidates(Candidate* candidates, int qt_candidates) {
         if (strcmp(candidates[i].name, searchName) == 0) {
             printf("Candidate found:\n");
             printf("Name: %s\n", candidates[i].name);
-            // Print other candidate information here...
-            printf("\n");
+            printf("CPF/RG: %s\n", candidates[i].id);
+            printf("Address: %s\n", candidates[i].address);
+            printf("Income: %d\n", candidates[i].family_size);
+            printf("Family size: %d\n", candidates[i].family_size);
+            printf("Number of family members needing medication: %d\n", candidates[i].family_members_needing_meds);
+            printf("Is vegeterian: ");
+                if (candidates[i].is_vegetarian == 1)
+                    printf("Yes\n");
+                else
+                    printf("No\n");
+            printf("Requires assistance in food Collection: ");
+                if (candidates[i].requires_assistance == 1)
+                    printf("Yes\n");
+                else
+                    printf("No\n");
+            printf("Availability: ");
+                if (candidates[i].availability == 1) 
+                    printf("Morning\n");
+                if (candidates[i].availability == 2)
+                    printf("Afternoon\n"); 
+                if (candidates[i].availability == 3)     
+                    printf("Evening:\n\n");
 
-            // Update candidate information here...
+            // TODO: Update candidate information here...
 
             printf("Candidate information updated successfully!\n\n");
             found = 1;
@@ -299,6 +341,7 @@ void UpdateCandidates(Candidate* candidates, int qt_candidates) {
 }
 
 // Function to remove a candidate
+
 void RemoveCandidates(Candidate** candidates, int* qt_candidates) {
     char searchName[100];
     printf("Enter candidate's name to remove: ");
@@ -338,7 +381,8 @@ void ProducersMenu() {
     printf("1. Register New Producer\n");
     printf("2. Add Food Item for Collection\n");
     printf("3. List All Registered Producers\n");
-    printf("4. Exit\n");
+    //TODO: printf("4. Search for a Producer\n"); and printing other functions in cases below
+    printf("7. Exit\n");
     printf("---------------------------------------");
 
     scanf("%d", option);
@@ -348,19 +392,22 @@ void ProducersMenu() {
         case 1:
             NewProducer(&producers, qt_producers); //TODO: Test it when both contains &, and when neither of them has &. If there is no Producers yet, maybe it will be necessary doing another function, called if null 
             break;
-         case 2:
-            ListPoducers(producers, qt_producers);
+        case 2: 
+            AddFoodItem(producers, qt_producers);
             break;
         case 3:
-            //TODO: SearchProducers(producers, qt_producers);
+            ListPoducers(producers, qt_producers);
             break;
         case 4:
-            //TODO: UpdateProducers(producers, qt_producers);
+            //TODO: SearchProducers(producers, qt_producers);
             break;
         case 5:
-            //TODO: RemoveProducers(&producers, qt_producers);
+            //TODO: UpdateProducers(producers, qt_producers);
             break;
         case 6:
+            //TODO: RemoveProducers(&producers, qt_producers);
+            break;
+        case 7:
             printf("Exiting the program.\n");
             break;
         default:
