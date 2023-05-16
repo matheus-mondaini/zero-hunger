@@ -55,14 +55,14 @@ void UpdateCandidates();
 void RemoveCandidates();
 void NewProducer();
 void ListPoducers();
-//TODO: void SearchProducers();
+void SearchProducers();
 //TODO: void UpdateProducers();
 //TODO: void RemoveProducers();
 void NewDonation();
 void ListDonations();
 void SearchDonations();
-//void StoreDate(); //TODO: Save the current data of the system in a database
-//void LoadDate(); //TODO:  Retrive the previously saved data and load it back
+//TODO: void StoreDate(); //Save the current data of the system in a database
+//TODO: void LoadDate(); //Retrive the previously saved data and load it back
 
 // Global Variables
 
@@ -381,7 +381,9 @@ void ProducersMenu() {
     printf("1. Register New Producer\n");
     printf("2. Add Food Item for Collection\n");
     printf("3. List All Registered Producers\n");
-    //TODO: printf("4. Search for a Producer\n"); and printing other functions in cases below
+    printf("4. Search for a Producer\n");
+    //TODO: printf("5. Update a Producer");
+    //TODO: printf("5. Remove a Producer");
     printf("7. Exit\n");
     printf("---------------------------------------");
 
@@ -399,7 +401,7 @@ void ProducersMenu() {
             ListPoducers(producers, qt_producers);
             break;
         case 4:
-            //TODO: SearchProducers(producers, qt_producers);
+            SearchProducers(producers, qt_producers);
             break;
         case 5:
             //TODO: UpdateProducers(producers, qt_producers);
@@ -489,6 +491,25 @@ void ListPoducers(Producer* producers, int num_producers) {
         PrintProducer(producers[i]);
     }
     printf("--------------------------------------\n\n");
+}
+
+void SearchProducers(Producer* producers, int qt_producers) {
+    char searchName[100];
+    printf("Enter producer's name to search: ");
+    scanf("%s", searchName);
+
+    int found = 0;
+    for (int i = 0; i < qt_producers; i++) {
+        if (strcmp(producers[i].name, searchName) == 0) {
+            printf("Producer found:\n");
+            PrintProducer(producers[i]);
+            found = 1;
+            break;
+        }
+    }
+    if (!found) {
+        printf("Producer not found.\n\n");
+    }
 }
 
 // Function to verifies the ID in Brazil
