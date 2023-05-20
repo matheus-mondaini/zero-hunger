@@ -48,14 +48,15 @@ int MainMenu();
 void CandidatesMenu();
 void ProducersMenu();
 //TOO: void DonationsMenu();
-void NewCandidates();
-void ListCandidates();
-void SearchCandidates();
-void UpdateCandidates();
-void RemoveCandidates();
-void NewProducer();
-void ListPoducers();
-void SearchProducers();
+void NewCandidates(Candidate** candidates, int* qt_candidates);
+void ListCandidates(Candidate* candidates, int qt_candidates);
+void SearchCandidates(Candidate* candidates, int qt_candidates);
+void UpdateCandidates(Candidate* candidates, int qt_candidates);
+void RemoveCandidates(Candidate** candidates, int* qt_candidates);
+void NewProducer(Producer** producers, int* num_producers);
+void AddFoodItem(Producer* producers, int num_producers);
+void ListProducers(Producer* producers, int num_producers);
+void SearchProducers(Producer* producers, int num_producers);
 //TODO: void UpdateProducers();
 //TODO: void RemoveProducers();
 void NewDonation();
@@ -67,7 +68,7 @@ void SearchDonations();
 // Global Variables
 
 Candidate *candidates;
-int qt_candidates= 0;
+int qt_candidates = 0;
 Producer *producers;
 int qt_producers = 0;
 Donation *donations;
@@ -112,13 +113,13 @@ void main() {
 int MainMenu() {
     int option;
 
-    printf("\\n--- FOOD DONATION MANAGEMENT SYSTEM ---\\n");
-    printf("\\n1. Manage Candidates\\n");
-    printf("2. Manage Producers\\n");
-    printf("3. Manage Donations\\n");
-    printf("4. Storage Data\\n");
-    printf("5. Exit Program\\n");
-    printf("\\nChoose an option: ");
+    printf("\n--- FOOD DONATION MANAGEMENT SYSTEM ---\n");
+    printf("\n1. Manage Candidates\n");
+    printf("2. Manage Producers\n");
+    printf("3. Manage Donations\n");
+    printf("4. Storage Data\n");
+    printf("5. Exit Program\n");
+    printf("\nChoose an option: ");
     scanf("%d", &option);
 
     return option;
@@ -130,15 +131,15 @@ void CandidatesMenu()
 {
     int option;
 
-    printf("--------Candidates Management--------");
-    printf("1. Register New Candidate");
-    printf("2. List all registered candidates");
-    printf("3. Search candidate by name");
-    printf("4. Update a candidate's information");
-    printf("5. Remove a candidate");
-    printf("6. Exit");
-    printf("---------------------------------------");
-
+    printf("\n--------Candidates Management--------\n");
+    printf("\n1. Register New Candidate\n");
+    printf("2. List all registered candidates\n");
+    printf("3. Search candidate by name\n");
+    printf("4. Update a candidate's information\n");
+    printf("5. Remove a candidate\n");
+    printf("6. Exit\n");
+    printf("---------------------------------------\n");
+    printf("\nChoose an option: ");
     scanf("%d", option);
 
     do {
@@ -173,18 +174,23 @@ void CandidatesMenu()
 // Function to add a new candidate
 
 void NewCandidates (Candidate** candidates, int* qt_candidates) {
-    // Allocate memory for a new candidate
+    
+    // Allocate memory for a new candidate, increasing the size of the candidates array
     *candidates = (Candidate*)realloc(*candidates, (*qt_candidates + 1) * sizeof(Candidate));
+    
+    //Pointer to the last candidate in the array
     Candidate* newCandidate = *candidates + *qt_candidates;
+    
     bool verified_id;
+    
     // Read candidate information from user input
     printf("Enter candidate's name: ");
-    scanf("%s", newCandidate->name);
+    scanf(" %[^\n}s", newCandidate->name);
         
         do
         {
             printf("Enter candidate's CPF/RG: ");
-            scanf("%s", newCandidate->id);
+            scanf(" %[^\n]s", newCandidate->id);
             verified_id = VerifyID(newCandidate->id);
         } while (!verified_id);
     
@@ -212,14 +218,14 @@ void NewCandidates (Candidate** candidates, int* qt_candidates) {
     // Increment the number of candidates
     (*qt_candidates)++;
 
-    printf("\nCandidate added successfully!\n\n");
+    printf("\nCandidate registered successfully!\n\n");
 
 }
 
 // Function to list all registered candidates
 
 void ListCandidates(Candidate* candidates, int qt_candidates) {
-    printf("-------- List of Candidates --------\n");
+    printf("--------List of Candidates--------\n");
     for (int i = 0; i < qt_candidates; i++) {
         printf("Candidate %d:\n", i + 1);
         printf("Name: %s\n", candidates[i].name);
@@ -252,9 +258,16 @@ void ListCandidates(Candidate* candidates, int qt_candidates) {
 // Function to search for a candidate by name
 
 void SearchCandidates(Candidate* candidates, int qt_candidates) {
+    if (qt_candidates == 0) {
+        printf("No candidates registered.\n");
+        return;
+    }
+    
+    printf("--------Search Candidates--------\n");
+
     char searchName[100];
     printf("Enter candidate's name to search: ");
-    scanf("%s", searchName);
+    scanf(" %[^n]s", searchName);
 
     int found = 0;
     for (int i = 0; i < qt_candidates; i++) {
@@ -295,9 +308,15 @@ void SearchCandidates(Candidate* candidates, int qt_candidates) {
 // Function to update a candidate's information
 
 void UpdateCandidates(Candidate* candidates, int qt_candidates) {
+    if (qt_candidates == 0) {
+        printf("No candidates registered.\n");
+    }
+    
+    printf("--------Update Candidate Informations--------\n");
+    
     char searchName[100];
     printf("Enter candidate's name to update: ");
-    scanf("%s", searchName);
+    scanf(" %[^\n]s", searchName);
 
     int found = 0;
     for (int i = 0; i < qt_candidates; i++) {
@@ -327,7 +346,46 @@ void UpdateCandidates(Candidate* candidates, int qt_candidates) {
                 if (candidates[i].availability == 3)     
                     printf("Evening:\n\n");
 
-            // TODO: Update candidate information here...
+            printf("Enter updated information:\n");
+            
+            printf("Enter name: ");
+            scanf(" %[^\n]s", candidates[i].name);
+            
+            printf("Enter ID: ");
+            scanf(" %[^\n]s", candidates[i].id);
+            
+            printf("Enter address: ");
+            scanf(" %[^\n]s", candidates[i].address);
+            
+            printf("Enter city: ");
+            scanf(" %[^\n]s", candidates[i].city);
+            
+            printf("Enter state: ");
+            scanf(" %[^\n]s", candidates[i].state);
+            
+            printf("Enter income: ");
+            scanf("%f", &(candidates[i].income));
+            
+            printf("Enter family size: ");
+            scanf("%d", &(candidates[i].family_size));
+            
+            printf("Enter number of family members needing medications: ");
+            scanf("%d", &(candidates[i].family_members_needing_meds));
+            
+            printf("Is the candidate vegetarian? (1 for yes, 0 for no): ");
+            scanf("%d", &(candidates[i].is_vegetarian));
+            
+            printf("Does the candidate require assistance? (1 for yes, 0 for no): ");
+            scanf("%d", &(candidates[i].requires_assistance));
+            
+            printf("Enter classification: ");
+            scanf(" %[^\n]s", candidates[i].classification);
+            
+            printf("Enter food allocation: ");
+            scanf("%f", &(candidates[i].food_allocation));
+            
+            printf("Enter availability: ");
+            scanf("%d", &(candidates[i].availability));
 
             printf("Candidate information updated successfully!\n\n");
             found = 1;
@@ -343,6 +401,13 @@ void UpdateCandidates(Candidate* candidates, int qt_candidates) {
 // Function to remove a candidate
 
 void RemoveCandidates(Candidate** candidates, int* qt_candidates) {
+    printf("\n--------Remove Candidate--------\n");
+    
+    if (*qt_candidates == 0) {
+        printf("No candidates registered.\n");
+        return;
+    }
+    
     char searchName[100];
     printf("Enter candidate's name to remove: ");
     scanf("%s", searchName);
@@ -377,16 +442,16 @@ void ProducersMenu() {
 
     int option;
     
-    printf("-------- Producers Management --------\n");
-    printf("1. Register New Producer\n");
+    printf("--------Producers Management--------\n");
+    printf("\n1. Register New Producer\n");
     printf("2. Add Food Item for Collection\n");
     printf("3. List All Registered Producers\n");
     printf("4. Search for a Producer\n");
     //TODO: printf("5. Update a Producer");
     //TODO: printf("5. Remove a Producer");
     printf("7. Exit\n");
-    printf("---------------------------------------");
-
+    printf("---------------------------------------\n");
+    printf("\nChoose an option: ");
     scanf("%d", option);
 
     do {
