@@ -7,40 +7,49 @@
 // Defining date structs
 
 typedef struct {
-    char name [100];
-    char id [20]; //In Brazil, everyone has a ID called CPF/RG. ID will be the PK for each person and being a national number helps to verify the person. If your country doesn't have a national ID like mine, you can create an ordinary numeric PK that will do the same.
-    char address;
-    char city [100];
-    char state [2];
+    char name[100];
+    char id[20];
+    char address[100];
+    char city[100];
+    char state[3];
     float income;
     int family_size;
     int family_members_needing_meds;
     bool is_vegetarian;
     bool requires_assistance;
-    char classification [20];
+    char classification[20];
     float food_allocation;
     int availability;
-}Candidate;
+} Candidate;
 
 typedef struct {
-    char name [50];
-    char id [20];
-    char address [50];
-    int state;
-    int city;
+    char name[50];
+    char id[20];
+    char address[50];
+    char state[3];
+    char city[50];
     char food[100][100];
     float kg[100];
-    int can_colect[100];
-    int num_food_itens;
-}Producer;
+    int can_collect[100];
+    int num_food_items;
+} Producer;
 
 typedef struct {
-    int id_candidate;
-    int id_producer;
+    int candidate_id;
+    int producer_id;
     char food[100];
     float kg;
     char expiration_date[20];
-}Donation;
+} Donation;
+
+// Global Variables
+
+Candidate *candidates;
+int qt_candidates = 0;
+Producer *producers;
+int qt_producers = 0;
+Donation *donations;
+int qt_donations = 0;
 
 // Functions prototypes:
 
@@ -65,15 +74,6 @@ void SearchDonations();
 //TODO: void StoreDate(); //Save the current data of the system in a database
 //TODO: void LoadDate(); //Retrive the previously saved data and load it back
 
-// Global Variables
-
-Candidate *candidates;
-int qt_candidates = 0;
-Producer *producers;
-int qt_producers = 0;
-Donation *donations;
-int qt_donations = 0;
-
 // Main Function
 
 void main() {
@@ -94,13 +94,16 @@ void main() {
             //TODO: StoreDate();
             break;
         case 5:
-            printf("Exiting the program.\\n");
+            // TODO: LoadData();
+            break;
+        case 6:
+            printf("Exiting the program.\n");
             break;
         default:
-            printf("Invalid choice. Please try again.\\n");
+            printf("Invalid choice. Please try again.\n");
             break;
         }
-    } while (option != 5);
+    } while (option != 6);
 
     // Frees memory allocated to data structures
     free(candidates);
@@ -117,8 +120,9 @@ int MainMenu() {
     printf("\n1. Manage Candidates\n");
     printf("2. Manage Producers\n");
     printf("3. Manage Donations\n");
-    printf("4. Storage Data\n");
-    printf("5. Exit Program\n");
+    printf("4. Store Data\n");
+    printf("5. Load Data\n");
+    printf("6. Exit Program\n");
     printf("\nChoose an option: ");
     scanf("%d", &option);
 
@@ -131,40 +135,40 @@ void CandidatesMenu()
 {
     int option;
 
-    printf("\n--------Candidates Management--------\n");
+    printf("\n-------- Candidates Management --------\n");
     printf("\n1. Register New Candidate\n");
-    printf("2. List all registered candidates\n");
-    printf("3. Search candidate by name\n");
-    printf("4. Update a candidate's information\n");
-    printf("5. Remove a candidate\n");
-    printf("6. Exit\n");
+    printf("2. List All Registered Candidates\n");
+    printf("3. Search Candidate by Name\n");
+    printf("4. Update Candidate Information\n");
+    printf("5. Remove Candidate\n");
+    printf("6. Back to Main Menu\n");
     printf("---------------------------------------\n");
     printf("\nChoose an option: ");
-    scanf("%d", option);
+    scanf("%d", &option);
 
     do {
-    switch (option) {
-        case 1:
-            NewCandidates(&candidates, qt_candidates); //TODO: Test it when both contains &, and when neither of them has &. If there is no Candidates yet, maybe it will be necessary doing another function, called if null 
-            break;
-        case 2:
-            ListCandidates(candidates, qt_candidates);
-            break;
-        case 3:
-            SearchCandidates(candidates, qt_candidates);
-            break;
-        case 4:
-            UpdateCandidates(candidates, qt_candidates);
-            break;
-        case 5:
-            RemoveCandidates(&candidates, qt_candidates);
-            break;
-        case 6:
-            printf("Exiting the program.\n");
-            break;
-        default:
-            printf("Invalid choice. Please try again.\n");
-            break;
+        switch (option) {
+            case 1:
+                NewCandidates(&candidates, qt_candidates); //TODO: Test it when both contains &, and when neither of them has &. If there is no Candidates yet, maybe it will be necessary doing another function, called if null 
+                break;
+            case 2:
+                ListCandidates(candidates, qt_candidates);
+                break;
+            case 3:
+                SearchCandidates(candidates, qt_candidates);
+                break;
+            case 4:
+                UpdateCandidates(candidates, qt_candidates);
+                break;
+            case 5:
+                RemoveCandidates(&candidates, qt_candidates);
+                break;
+            case 6:
+                printf("Exiting the program.\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+                break;
         }
     } while (option != 6);
 
@@ -187,12 +191,12 @@ void NewCandidates (Candidate** candidates, int* qt_candidates) {
     printf("Enter candidate's name: ");
     scanf(" %[^\n}s", newCandidate->name);
         
-        do
-        {
-            printf("Enter candidate's CPF/RG: ");
-            scanf(" %[^\n]s", newCandidate->id);
-            verified_id = VerifyID(newCandidate->id);
-        } while (!verified_id);
+    do
+    {
+        printf("Enter candidate's CPF/RG: ");
+        scanf(" %[^\n]s", newCandidate->id);
+        verified_id = VerifyID(newCandidate->id);
+    } while (!verified_id);
     
     printf("Enter candidate's address: ");
     scanf(" %[^\n]s", newCandidate->address);
@@ -225,7 +229,7 @@ void NewCandidates (Candidate** candidates, int* qt_candidates) {
 // Function to list all registered candidates
 
 void ListCandidates(Candidate* candidates, int qt_candidates) {
-    printf("--------List of Candidates--------\n");
+    printf("-------- Registered Candidates--------\n");
     for (int i = 0; i < qt_candidates; i++) {
         printf("Candidate %d:\n", i + 1);
         printf("Name: %s\n", candidates[i].name);
@@ -410,7 +414,7 @@ void RemoveCandidates(Candidate** candidates, int* qt_candidates) {
     
     char searchName[100];
     printf("Enter candidate's name to remove: ");
-    scanf("%s", searchName);
+    scanf("%s", &searchName);
 
     int found = 0;
     for (int i = 0; i < *qt_candidates; i++) {
@@ -452,7 +456,7 @@ void ProducersMenu() {
     printf("7. Exit\n");
     printf("---------------------------------------\n");
     printf("\nChoose an option: ");
-    scanf("%d", option);
+    scanf("%d", &option);
 
     do {
     switch (option) {
@@ -495,7 +499,7 @@ void NewProducer(Producer** producers, int* num_producers) {
     printf("Enter producer ID: ");
     scanf("%d", &producer.id);
 
-    producer.num_food_itens = 0;
+    producer.num_food_items = 0;
 
     (*num_producers)++;
     *producers = (Producer*)realloc(*producers, (*num_producers) * sizeof(Producer));
@@ -513,13 +517,13 @@ void AddFoodItem(Producer* producers, int num_producers) {
     for (int i = 0; i < num_producers; i++) {
         if (producers[i].id == id) {
             printf("Enter food name: ");
-            scanf(" %[^\n]s", producers[i].food[producers[i].num_food_itens]);
+            scanf(" %[^\n]s", producers[i].food[producers[i].num_food_items]);
             printf("Enter quantity (in kg): ");
-            scanf("%d", &producers[i].kg[producers[i].num_food_itens]);
+            scanf("%d", &producers[i].kg[producers[i].num_food_items]);
             printf("Is the food item available for Collection? (0 = No, 1 = Yes): ");
-            scanf("%d", &producers[i].can_colect[producers[i].num_food_itens]);
+            scanf("%d", &producers[i].can_collect[producers[i].num_food_items]);
 
-            producers[i].num_food_itens++;
+            producers[i].num_food_items++;
             found = 1;
 
             printf("Food item added successfully!\n\n");
@@ -537,9 +541,9 @@ void PrintProducer(Producer producer) {
     printf("Address: %s\n", producer.address);
     printf("ID: %d\n", producer.id);
     printf("Food Items for Collection:\n");
-    for (int i = 0; i < producer.num_food_itens; i++) {
+    for (int i = 0; i < producer.num_food_items; i++) {
         printf("- Food: %s, Quantity: %d kg, Collectable: %s\n", producer.food[i], producer.kg[i],
-               producer.can_colect[i] ? "Yes" : "No");
+               producer.can_collect[i] ? "Yes" : "No");
     }
     printf("\n");
 }
@@ -561,7 +565,7 @@ void ListPoducers(Producer* producers, int num_producers) {
 void SearchProducers(Producer* producers, int qt_producers) {
     char searchName[100];
     printf("Enter producer's name to search: ");
-    scanf("%s", searchName);
+    scanf("%s", &searchName);
 
     int found = 0;
     for (int i = 0; i < qt_producers; i++) {
@@ -583,13 +587,13 @@ int VerifyID(char cpf_cnpj[]) {
 
     int lenght = strlen(cpf_cnpj);
     if (lenght == 11 && VerifyCPF(cpf_cnpj)) {
-        printf("Valid CPF.\\n");
+        printf("Valid CPF.\n");
         return 1;
     } else if (lenght == 14 && VerifyCNPJ(cpf_cnpj)) {
-        printf("Valid CNPJ.\\n");
+        printf("Valid CNPJ.\n");
         return 1;
     } else {
-        printf("Invalid CPF or CNPJ.\\n");
+        printf("Invalid CPF or CNPJ.\n");
         return 0;
     }
 
