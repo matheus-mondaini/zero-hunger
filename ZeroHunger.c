@@ -67,12 +67,15 @@ void NewProducer();
 void AddFoodItem();
 void ListProducers();
 void SearchProducer();
-//TODO: void UpdateProducers();
-//TODO: void RemoveProducers();
+void UpdateProducers();
+void RemoveProducer();
 
 void NewDonation();
 void ListDonations();
-//TODO: void SearchDonations();
+void SearchDonation();
+void SearchDonationByCandidateID();
+void SearchDonationByProducerID();
+void SearchDonationByFood();
 
 bool VerifyID();
 bool VerifyCPF();
@@ -167,6 +170,7 @@ void CandidatesMenu() {
             case 6:
                 printf("Returning to the main menu.\n");
                 MainMenu();
+                break;
             default:
                 printf("Invalid choice. Please try again.\n");
                 break;
@@ -184,8 +188,8 @@ void ProducersMenu() {
         printf("2. Add Food Item\n");
         printf("3. List All Registered Producers\n");
         printf("4. Search Producer by Name\n");
-        //TODO: printf("5. Update a Producer");
-        //TODO: printf("6. Remove a Producer");
+        printf("5. Update a Producer");
+        printf("6. Remove a Producer");
         printf("7. Back to Main Menu\n");
         printf("---------------------------------------\n");
         
@@ -206,10 +210,10 @@ void ProducersMenu() {
                 SearchProducer();
                 break;
             case 5:
-                //TODO: UpdateProducers(producers, qt_producers);
+                UpdateProducers();
                 break;
             case 6:
-                //TODO: RemoveProducers(&producers, qt_producers);
+                RemoveProducer();
                 break;
             case 7:
                 printf("Returning to the main menu.\n");
@@ -231,7 +235,7 @@ void DonationsMenu() {
         printf("\n-------- Donations Management --------\n");
         printf("\n1. Register New Donation\n");
         printf("2. List All Registered Donations\n");
-        printf("3. Search Donation by Food Item\n");
+        printf("3. Search Donation\n");
         printf("4. Back to Main Menu\n");
         printf("---------------------------------------\n");
         
@@ -246,6 +250,7 @@ void DonationsMenu() {
                 ListDonations();
                 break;
             case 3:
+                SearchDonation();
                 break;
             case 4:
                 printf("Returning to the main menu.\n");
@@ -334,8 +339,12 @@ void NewCandidate() {
     scanf(" %[^\n]s", candidate.city);
 
     printf("State (2-letter code): ");
-    //TODO: verify number of characters
-    scanf(" %[^\n]s", candidate.state);
+    do
+    {
+        scanf(" %[^\n]s", candidate.state);
+        if(strlen(candidate.state) != 2)
+            printf("Invalid state code. 2-letter code only: ");
+    } while (strlen(candidate.state) != 2);
 
     printf("Income: ");
     scanf("%f", &candidate.income);
@@ -370,7 +379,7 @@ void NewCandidate() {
 
     printf("\nCandidate registered successfully.\n");
 
-    printf("Type enter to continue...");
+    printf("Type any keyword to continue...");
     system("pause");
 }
 
@@ -399,7 +408,7 @@ void ListCandidates() {
         printf("Availability: %d\n", candidates[i].availability);
     }
 
-    printf("Type enter to continue...");
+    printf("Type any keyword to continue...");
     system("pause");
 }
 
@@ -433,7 +442,7 @@ void SearchCandidate() {
         printf("Candidate not found.\n");
     }
 
-    printf("Type enter to continue...");
+    printf("Type any keyword to continue...");
     system("pause");
 }
 
@@ -479,8 +488,13 @@ void UpdateCandidate() {
             printf("City: ");
             scanf(" %[^\n]s", candidates[i].city);
 
-            printf("State (2-letter code): ");
-            scanf(" %[^\n]s", candidates[i].state);
+            do
+            {
+                scanf(" %[^\n]s", candidates[i].state);
+                if(strlen(candidates[i].state) != 2)
+                    printf("Invalid state code. 2-letter code only: ");
+            } while (strlen(candidates[i].state) != 2);
+
 
             printf("Income: ");
             scanf("%f", &candidates[i].income);
@@ -515,7 +529,7 @@ void UpdateCandidate() {
         printf("Candidate not found.\n");
     }
 
-    printf("Type enter to continue...");
+    printf("Type any keyword to continue...");
     system("pause");
 }
 
@@ -542,7 +556,7 @@ void RemoveCandidate() {
         printf("Candidate not found.\n");
     }
 
-    printf("Type enter to continue...");
+    printf("Type any keyword to continue...");
     system("pause");
 }
 
@@ -573,7 +587,7 @@ void NewProducer() {
 
     printf("Producer registered successfully.\n");
 
-    printf("Type enter to continue...");
+    printf("Type any keyword to continue...");
     system("pause");
 }
 
@@ -614,7 +628,7 @@ void AddFoodItem() {
 
     printf("Food item added successfully.\n");
 
-    printf("Type enter to continue...");
+    printf("Type any keyword to continue...");
     system("pause");
 }
 
@@ -640,7 +654,7 @@ void ListProducers() {
         }
     }
 
-    printf("Type enter to continue...");
+    printf("Type any keyword to continue...");
     system("pause");
 }
 
@@ -664,6 +678,86 @@ void SearchProducer() {
             for (int j = 0; j < producers[i].num_food_items; j++) {
                 printf("%d. %s - %.2f kg\n", j + 1, producers[i].food[j], producers[i].kg[j]);
             }
+        }
+    }
+
+    if (!found) {
+        printf("Producer not found.\n");
+    }
+
+    printf("Type any keyword to continue...");
+    system("pause");
+}
+
+void UpdateProducers() {
+    if (num_producers == 0) {
+        printf("No producers registered.\n");
+    }
+
+    char name[100];
+    printf("Enter the name of the producer to update: ");
+    scanf(" %[^\n]s", name);
+
+    bool found = false;
+    for (int i = 0; i < num_producers; i++) {
+        if (strcmp(producers[i].name, name) == 0) {
+            found = true;
+            printf("\nProducer %d\n", i + 1);
+            printf("Name: %s\n", producers[i].name);
+            printf("ID: %s\n", producers[i].id);
+            printf("Address: %s\n", producers[i].address);
+            printf("City: %s\n", producers[i].city);
+            printf("State: %s\n", producers[i].state);
+
+            printf("\nFood Items:\n");
+            for (int j = 0; j < producers[i].num_food_items; j++) {
+                printf("%d. %s - %.2f kg\n", j + 1, producers[i].food[j], producers[i].kg[j]);
+            }
+
+            printf("\nEnter the updated information:\n");
+
+            printf("Name: ");
+            scanf(" %[^\n]s", producers[i].name);
+
+            printf("ID: ");
+            scanf(" %[^\n]s", producers[i].id);
+
+            printf("Address: ");
+            scanf(" %[^\n]s", producers[i].address);
+
+            printf("City: ");
+            scanf(" %[^\n]s", producers[i].city);
+
+            printf("State (2-letter code): ");
+            scanf(" %[^\n]s", producers[i].state);
+
+            printf("Producer information updated successfully.\n");
+        }
+    }
+
+    if (!found) {
+        printf("Producer not found.\n");
+    }
+
+    printf("Type enter to continue...");
+}
+
+void RemoveProducer() {
+    char name[100];
+    printf("Enter the name of the producer to remove: ");
+    scanf(" %[^\n]s", name);
+
+    bool found = false;
+    for (int i = 0; i < num_producers; i++) {
+        if (strcmp(producers[i].name, name) == 0) {
+            found = true;
+            for (int j = i; j < num_producers - 1; j++) {
+                producers[j] = producers[j + 1];
+            }
+            num_producers--;
+            producers = (Producer*)realloc(producers, num_producers * sizeof(Producer));
+            printf("Producer removed successfully.\n");
+            break;
         }
     }
 
@@ -740,7 +834,7 @@ void NewDonation() {
     candidate->food_allocation += donation.kg;
     candidate->availability = candidate->food_allocation >= 1.5 * candidate->family_members_needing_meds;
 
-    printf("Type enter to continue...");
+    printf("Type any keyword to continue...");
     system("pause");
     DonationsMenu();
 }
@@ -757,11 +851,107 @@ void ListDonations() {
         printf("\nDonation %d\n", i + 1);
     }
 
-    printf("Type enter to continue...");
+    printf("Type any keyword to continue...");
     system("pause");
     DonationsMenu();
 }
 
+void SearchDonation() {
+    int choice;
+    printf("\n--- Search Donations ---\n");
+    printf("1. Search by Candidate ID\n");
+    printf("2. Search by Producer ID\n");
+    printf("3. Search by Food\n");
+    printf("--------------------------\n");
+
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+
+    switch (choice) {
+        case 1:
+            SearchDonationByCandidateID();
+            break;
+        case 2:
+            SearchDonationByProducerID();
+            break;
+        case 3:
+            SearchDonationByFood();
+            break;
+        default:
+            printf("Invalid choice. Please try again.\n");
+    }
+}
+
+void SearchDonationByCandidateID() {
+    int candidateID;
+    printf("Enter the Candidate ID: ");
+    scanf("%d", &candidateID);
+
+    printf("Donations by Candidate ID %d:\n", candidateID);
+    int found = 0;
+    for (int i = 0; i < num_donations; i++) {
+        if (donations[i].candidate_id == candidateID) {
+            printf("Donation ID: %d\n", i + 1);
+            printf("Producer ID: %d\n", donations[i].producer_id);
+            printf("Food: %s", donations[i].food);
+            printf("Kilograms: %.2f\n", donations[i].kg);
+            printf("Expiration Date: %s", donations[i].expiration_date);
+            printf("------------------------\n");
+            found = 1;
+        }
+    }
+    if (!found) {
+        printf("No donations found for Candidate ID %d.\n", candidateID);
+    }
+}
+
+void SearchDonationByProducerID() {
+    int producerID;
+    printf("Enter the Producer ID: ");
+    scanf("%d", &producerID);
+
+    printf("Donations by Producer ID %d:\n", producerID);
+    int found = 0;
+    for (int i = 0; i < num_donations; i++) {
+        if (donations[i].producer_id == producerID) {
+            printf("Donation ID: %d\n", i + 1);
+            printf("Candidate ID: %d\n", donations[i].candidate_id);
+            printf("Food: %s", donations[i].food);
+            printf("Kilograms: %.2f\n", donations[i].kg);
+            printf("Expiration Date: %s", donations[i].expiration_date);
+            printf("------------------------\n");
+            found = 1;
+        }
+    }
+    if (!found) {
+        printf("No donations found for Producer ID %d.\n", producerID);
+    }
+}
+
+void SearchDonationByFood() {
+    char food[100];
+    printf("Enter the Food: ");
+    getchar();
+    fgets(food, sizeof(food), stdin);
+    food[strcspn(food, "\n")] = '\0'; // Remove newline character
+
+    printf("Donations with Food '%s':\n", food);
+    int found = 0;
+    for (int i = 0; i < num_donations; i++) {
+        if (strcmp(donations[i].food, food) == 0) {
+            printf("Donation ID: %d\n", i + 1);
+            printf("Candidate ID: %d\n", donations[i].candidate_id);
+            printf("Producer ID: %d\n", donations[i].producer_id);
+            printf("Kilograms: %.2f\n", donations[i].kg);
+            printf("Expiration Date: %s", donations[i].expiration_date);
+            printf("------------------------\n");
+            found = 1;
+        }
+    }
+    if (!found) {
+        printf("No donations found with Food '%s'.\n", food);
+    }
+}
 
 // Function to verifies the ID in Brazil
 
